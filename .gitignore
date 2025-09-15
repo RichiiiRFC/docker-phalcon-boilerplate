@@ -1,0 +1,9 @@
+/apps/
+
+mariadb_data/
+
+.env
+
+
+.DS_Store
+Thumbs.db

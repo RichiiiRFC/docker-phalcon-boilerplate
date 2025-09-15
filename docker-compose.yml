@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  # Servicio de la base de datos (sin cambios)
+  mariadb:
+    image: mariadb:10.11
+    container_name: mariadb-phalcon
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "phalcon_db"
+      MYSQL_USER: "phalcon"
+      MYSQL_PASSWORD: "phalcon"
+    ports:
+      - "3307:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  # Servicio PHP-FPM usando la imagen oficial de Phalcon
+  php:
+    build:
+      context: ./docker/php
+      args:
+        USER_ID: ${UID:-1000}
+        GROUP_ID: ${GID:-1000}
+    container_name: phalcon-php-fpm
+    restart: unless-stopped
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - ./apps:/var/www/html
+
+  # Servicio del Servidor Web Nginx
+  nginx:
+    build:
+      context: ./docker/nginx
+    container_name: phalcon-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./apps:/var/www/html
+    depends_on:
+      - php
+
+volumes:
+  mariadb_data:
