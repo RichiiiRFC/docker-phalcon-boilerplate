@@ -41,6 +41,15 @@ services:
       - ./apps:/var/www/html
     depends_on:
       - php
+      
+  node:
+    image: node:18
+    container_name: phalcon-node
+    working_dir: /usr/src/app
+    volumes:
+      - ./apps:/usr/src/app
+    command: tail -f /dev/null
+    tty: true
 
 volumes:
   mariadb_data:
