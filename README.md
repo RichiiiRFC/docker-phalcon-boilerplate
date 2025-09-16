@@ -1,6 +1,3 @@
-¡Por supuesto! Aquí tienes el contenido completo formateado directamente para que lo copies y pegues en tu archivo `README.md`.
-
-```markdown
 # Entorno de Desarrollo Phalcon con Docker + Nginx + Node.js
 
 Este proyecto contiene un entorno de desarrollo completo basado en Docker para crear y gestionar múltiples aplicaciones web con el framework Phalcon. La arquitectura utiliza Nginx como servidor web, PHP-FPM y un contenedor de Node.js para la gestión del frontend.
