@@ -1,162 +1,213 @@
-# Entorno de Desarrollo Phalcon con Docker + Nginx + Node.js
+# Entorno de Desarrollo Phalcon con Docker 🐳
 
-Este proyecto contiene un entorno de desarrollo completo basado en Docker para crear y gestionar múltiples aplicaciones web con el framework Phalcon. La arquitectura utiliza Nginx como servidor web, PHP-FPM y un contenedor de Node.js para la gestión del frontend.
+Un entorno de desarrollo completo basado en Docker para crear y gestionar múltiples aplicaciones web con el framework Phalcon. La arquitectura utiliza Nginx como servidor web, PHP-FPM y un contenedor de Node.js para la gestión del frontend.
 
-## Arquitectura
+## 🏗️ Arquitectura
 
-*   **Servidor Web:** Nginx (configurado para `Virtual Hosts` dinámicos)
-*   **PHP:** Imagen oficial de Phalcon (`phalconphp/cphalcon:v5.9.2-php8.4`) con PHP-FPM.
-*   **Base de Datos:** MariaDB.
-*   **Frontend:** Contenedor con Node.js v18 para gestionar dependencias y procesos de build.
-*   **Herramientas Incluidas:** Composer, Phalcon Devtools, NPM/NPX.
+- **Servidor Web:** Nginx (configurado para Virtual Hosts dinámicos)
+- **PHP:** Imagen oficial de Phalcon (`phalconphp/cphalcon:v5.9.2-php8.4`) basada en PHP-FPM
+- **Base de Datos:** MariaDB
+- **Frontend:** Contenedor con Node.js v18 para gestionar dependencias y procesos de build
+- **Herramientas Incluidas:** Composer, Phalcon Devtools, NPM/NPX
+- **Configuración:** Virtual Hosts automáticos con Nginx para proyectos `*.local`
 
----
+## 🚀 Inicio Rápido
 
-## Cómo Empezar a Trabajar
+### 1. Crear la Carpeta de Proyectos
 
-Para levantar y usar el entorno, sigue estos pasos.
+Primero, crea la carpeta donde estarán tus aplicaciones en la raíz del proyecto:
 
-### 1. Iniciar el Entorno
+```bash
+mkdir apps
+```
 
-Abre una terminal (como PowerShell o la terminal de WSL) en la raíz de este proyecto y ejecuta el siguiente comando. Esto levantará todos los contenedores (Nginx, PHP, MariaDB, Node.js) en segundo plano.
+### 2. Levantar el Entorno
+
+**Desde la raíz del proyecto** (donde está el `docker-compose.yml`), abre una terminal y ejecuta:
 
 ```bash
 docker-compose up -d
 ```
 
-### 2. Acceder a un Proyecto Existente
+Este comando levantará todos los contenedores (Nginx, PHP-FPM, MariaDB, Node.js) en segundo plano.
 
-Si ya tienes proyectos en la carpeta `apps/`, simplemente abre tu navegador y ve a la URL que hayas configurado, por ejemplo:
-`http://nombre-del-proyecto.local:8080`
+## 📦 Crear un Nuevo Proyecto Phalcon
 
----
+### Ejemplo: Crear un proyecto llamado `mi-tienda`
 
-## Cómo Crear un Nuevo Proyecto Phalcon
-
-Este es el flujo de trabajo para crear una nueva aplicación Phalcon desde cero. Supongamos que queremos crear un proyecto llamado **`mi-tienda`**.
-
-### Paso 1: Entrar a la Terminal del Contenedor PHP
-
-Necesitamos acceder al contenedor donde están instaladas las herramientas de Phalcon.
+#### Paso 1: Acceder al Contenedor PHP
 
 ```bash
 docker-compose exec php bash
 ```
 
-Tu terminal cambiará para mostrar que ahora estás dentro del contenedor, en la ruta `/var/www/html`.
-
-### Paso 2: Crear el Proyecto con Phalcon Devtools
-
-Ejecuta el comando para crear la estructura de archivos del nuevo proyecto.
+#### Paso 2: Crear el Proyecto
 
 ```bash
-phalcon project mi-tienda```
+phalcon project mi-tienda
+```
 
 Esto creará una nueva carpeta `mi-tienda` dentro del directorio `apps/`.
 
-### Paso 3: Registrar el Dominio Local en tu PC
+#### Paso 3: Registrar el Dominio Local (Solo una vez por proyecto)
 
-Este paso solo se hace **una vez por cada proyecto nuevo**.
+Aunque Nginx maneja los dominios `*.local` automáticamente, tu sistema operativo necesita saber que estos dominios apuntan a tu máquina local.
 
-1.  Abre **PowerShell como Administrador** en Windows.
-2.  Ejecuta el siguiente comando:
+**En Windows (PowerShell como Administrador):**
 
-    ```powershell
-    Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "`n127.0.0.1`tmi-tienda.local" -Force
-    ```
+```powershell
+Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "`n127.0.0.1 mi-tienda.local" -Force
+```
 
-### Paso 4: ¡Visita tu Nuevo Proyecto!
+**En Linux/macOS:**
 
-Abre tu navegador web y ve a la nueva URL:
+```bash
+echo "127.0.0.1 mi-tienda.local" | sudo tee -a /etc/hosts
+```
 
-**http://mi-tienda.local:8080**
+#### Paso 4: Visitar el Proyecto
 
-¡Deberías ver la página de bienvenida de Phalcon!
+Abre tu navegador y visita:
 
----
+```
+http://mi-tienda.local:8080
+```
 
-## Cómo Usar el Entorno de Node.js
+¡Deberías ver la página de bienvenida de Phalcon! 🎉
 
-El contenedor de Node.js está diseñado para manejar todas las tareas de frontend, como instalar dependencias, compilar assets (CSS, JavaScript) o ejecutar un servidor de desarrollo (Vite, etc.).
+> **💡 Para proyectos existentes:** Si ya tienes proyectos en la carpeta `apps/`, simplemente agrega el dominio al archivo `hosts` (paso 3) y visita `http://nombre-del-proyecto.local:8080`. Gracias a la configuración de Nginx, cualquier dominio `.local` se dirige automáticamente a la carpeta correspondiente.
 
-### Paso 1: Entrar a la Terminal del Contenedor Node
+## 🛠️ Trabajar con Node.js
 
-Para trabajar con `npm` o `npx`, primero accede al contenedor:
+### Acceder al Contenedor Node
 
 ```bash
 docker-compose exec node bash
 ```
 
-Estarás en el directorio `/usr/src/app`, que es un espejo de la carpeta `apps/` de tu máquina.
-
-### Paso 2: Trabajar en tu Proyecto
-
-Una vez dentro, navega al directorio de tu proyecto específico y usa `npm` como lo harías normalmente.
+### Ejemplo de Uso
 
 ```bash
-# Navega a la carpeta de tu proyecto
+# Navegar a tu proyecto
 cd mi-tienda
 
-# Inicializa un proyecto de Node.js (si no tienes un package.json)
+# Inicializar package.json
 npm init -y
 
-# Instala tus dependencias (ejemplo con Vite y Sass)
+# Instalar dependencias
 npm install vite sass
 
-# Ejecuta un script de tu package.json (ej. para compilar los assets)
+# Ejecutar scripts
 npm run build
 ```
 
-Los archivos generados por el proceso de build aparecerán en tu carpeta local `apps/mi-tienda`, listos para ser utilizados por tu aplicación Phalcon.
+Los archivos generados aparecerán en `apps/mi-tienda` y estarán disponibles para tu aplicación Phalcon.
 
----
+## 🗄️ Conexión a la Base de Datos
 
-## Comandos Útiles de Docker
+### Desde los Contenedores
 
-*   **Levantar el entorno en segundo plano:**
-    ```bash
-    docker-compose up -d
-    ```
+- **Host:** `mariadb`
+- **Puerto:** `3306`
+- **Usuario:** `phalcon`
+- **Contraseña:** `phalcon`
+- **Base de Datos:** `phalcon_db`
 
-*   **Detener y eliminar los contenedores (libera los puertos):**
-    ```bash
-    docker-compose down
-    ```
+### Desde tu Máquina Local
 
-*   **Acceder a la terminal de un contenedor:**
-    ```bash
-    # Para PHP y Phalcon Devtools
-    docker-compose exec php bash
+- **Host:** `127.0.0.1`
+- **Puerto:** `3307`
+- **Usuario:** `phalcon`
+- **Contraseña:** `phalcon`
+- **Base de Datos:** `phalcon_db`
 
-    # Para Node.js y NPM
-    docker-compose exec node bash
-    ```
+## 📋 Comandos Útiles
 
-*   **Ver los logs de los contenedores (muy útil para depurar):**
-    ```bash
-    docker-compose logs -f
-    ```
-    Para ver los logs de un servicio específico (ej. PHP):
-    ```bash
-    docker-compose logs -f php
-    ```
+### Gestión de Contenedores
 
-*   **Reconstruir las imágenes (solo si modificas un `Dockerfile`):**
-    ```bash
-    docker-compose build --no-cache
-    ```
+```bash
+# Levantar el entorno
+docker-compose up -d
 
----
+# Detener y eliminar contenedores
+docker-compose down
 
-## Conexión a la Base de Datos
+# Ver logs de todos los servicios
+docker-compose logs -f
 
-*   **Host:** `mariadb` (Este es el nombre del servicio en `docker-compose.yml`)
-*   **Puerto:** `3306` (Desde dentro de los contenedores)
-*   **Usuario:** `phalcon`
-*   **Contraseña:** `phalcon`
-*   **Base de Datos:** `phalcon_db`
+# Ver logs de un servicio específico
+docker-compose logs -f php
 
-Para conectar desde una herramienta externa en tu PC (como DBeaver, HeidiSQL o TablePlus):
-*   **Host:** `127.0.0.1`
-*   **Puerto:** `3307` (Este es el puerto que está expuesto a tu máquina)
+# Reconstruir imágenes
+docker-compose build --no-cache
 ```
+
+### Acceso a Terminales
+
+```bash
+# Terminal PHP/Phalcon
+docker-compose exec php bash
+
+# Terminal Node.js
+docker-compose exec node bash
+
+# Terminal MariaDB
+docker-compose exec mariadb mysql -u phalcon -p
+```
+
+## 🔧 Estructura del Proyecto
+
+```
+tu-carpeta-phalcon/         # Carpeta raíz del proyecto
+├── apps/                   # Tus aplicaciones Phalcon (crear manualmente)
+│   ├── proyecto1/
+│   └── proyecto2/
+├── docker/
+│   ├── nginx/
+│   │   ├── Dockerfile      # Imagen personalizada de Nginx
+│   │   └── vhosts.conf     # Configuración de Virtual Hosts
+│   ├── php/
+│   │   └── Dockerfile      # Imagen personalizada de PHP + Phalcon
+│   └── node/               # (Usa imagen oficial de Node.js 18)
+├── docker-compose.yml      # Configuración de servicios
+├── .gitignore             # apps/ está excluido del repositorio
+└── README.md
+```
+
+> **📁 Nota importante:** La carpeta `apps/` no se incluye en el repositorio porque es donde desarrollas tus proyectos personales. Debes crearla manualmente **en la raíz del proyecto** antes de usar el entorno.
+
+## 🐛 Solución de Problemas
+
+### El proyecto no se ve en el navegador
+1. **Verifica el archivo hosts:** El dominio debe apuntar a 127.0.0.1 (Nginx maneja la redirección automáticamente, pero el SO necesita resolver el dominio)
+2. **Contenedores activos:** `docker-compose ps` - todos deben estar "Up"
+3. **Logs de Nginx:** `docker-compose logs nginx`
+4. **Estructura de carpetas:** Verifica que tu proyecto esté en `apps/nombre-proyecto/public/index.php`
+
+### Error de permisos en archivos
+```bash
+# Desde el contenedor PHP
+docker-compose exec php chown -R www-data:www-data /var/www/html/apps/tu-proyecto
+
+# O desde tu máquina (Linux/macOS)
+sudo chown -R $(id -u):$(id -g) ./apps/tu-proyecto
+```
+
+### La base de datos no conecta
+1. **Estado de MariaDB:** `docker-compose ps` - debe estar "Up"
+2. **Host correcto:** Usa `mariadb` como host desde los contenedores, **no** `localhost` o `127.0.0.1`
+3. **Puerto correcto:** `3306` desde contenedores, `3307` desde tu máquina
+4. **Credenciales:** Usuario: `phalcon`, Contraseña: `phalcon`, Base de datos: `phalcon_db`
+
+### Problemas con Node.js
+```bash
+# Si el contenedor Node no responde
+docker-compose restart node
+
+# Para instalar dependencias globalmente
+docker-compose exec node npm install -g tu-paquete
+```
+
+---
+
+**¿Tienes problemas?** Abre un [issue](../../issues) y te ayudaremos 😊
