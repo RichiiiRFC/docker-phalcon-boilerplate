@@ -166,11 +166,10 @@ tu-carpeta-phalcon/         # Carpeta raíz del proyecto
 │   ├── nginx/
 │   │   ├── Dockerfile      # Imagen personalizada de Nginx
 │   │   └── vhosts.conf     # Configuración de Virtual Hosts
-│   ├── php/
-│   │   └── Dockerfile      # Imagen personalizada de PHP + Phalcon
-│   └── node/               # (Usa imagen oficial de Node.js 18)
+│   └── php/
+│       └── Dockerfile      # Imagen personalizada de PHP + Phalcon
 ├── docker-compose.yml      # Configuración de servicios
-├── .gitignore             # apps/ está excluido del repositorio
+├── .gitignore              # apps/ está excluido del repositorio
 └── README.md
 ```
 
