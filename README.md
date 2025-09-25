@@ -105,15 +105,17 @@ Los archivos generados aparecerán en `apps/mi-tienda` y estarán disponibles pa
 
 ## 🗄️ Conexión a la Base de Datos
 
-### Desde los Contenedores
+### Desde tus Aplicaciones Phalcon (dentro de los contenedores)
 
-- **Host:** `mariadb`
+- **Host:** `mariadb-phalcon`
 - **Puerto:** `3306`
 - **Usuario:** `phalcon`
 - **Contraseña:** `phalcon`
 - **Base de Datos:** `phalcon_db`
 
-### Desde tu Máquina Local
+### Desde Herramientas Externas (DBeaver, HeidiSQL, etc.)
+
+Para conectar desde tu máquina con herramientas de administración de BD:
 
 - **Host:** `127.0.0.1`
 - **Puerto:** `3307`
@@ -151,8 +153,11 @@ docker-compose exec php bash
 # Terminal Node.js
 docker-compose exec node bash
 
-# Terminal MariaDB
+# Terminal MariaDB (usando Docker Compose)
 docker-compose exec mariadb mysql -u phalcon -p
+
+# Terminal MariaDB (usando Docker directamente)
+docker exec -it mariadb-phalcon mysql -u phalcon -p
 ```
 
 ## 🔧 Estructura del Proyecto
@@ -166,10 +171,11 @@ tu-carpeta-phalcon/         # Carpeta raíz del proyecto
 │   ├── nginx/
 │   │   ├── Dockerfile      # Imagen personalizada de Nginx
 │   │   └── vhosts.conf     # Configuración de Virtual Hosts
-│   └── php/
-│       └── Dockerfile      # Imagen personalizada de PHP + Phalcon
+│   ├── php/
+│   │   └── Dockerfile      # Imagen personalizada de PHP + Phalcon
+│   └── node/               # (Usa imagen oficial de Node.js 18)
 ├── docker-compose.yml      # Configuración de servicios
-├── .gitignore              # apps/ está excluido del repositorio
+├── .gitignore             # apps/ está excluido del repositorio
 └── README.md
 ```
 
@@ -194,7 +200,7 @@ sudo chown -R $(id -u):$(id -g) ./apps/tu-proyecto
 
 ### La base de datos no conecta
 1. **Estado de MariaDB:** `docker-compose ps` - debe estar "Up"
-2. **Host correcto:** Usa `mariadb` como host desde los contenedores, **no** `localhost` o `127.0.0.1`
+2. **Host correcto:** Usa `mariadb-phalcon` como host desde tus aplicaciones, **no** `localhost` o `127.0.0.1`
 3. **Puerto correcto:** `3306` desde contenedores, `3307` desde tu máquina
 4. **Credenciales:** Usuario: `phalcon`, Contraseña: `phalcon`, Base de datos: `phalcon_db`
 
